@@ -1,0 +1,21 @@
+node_modules
+*.log
+.output
+.env
+dist
+.DS_Store
+
+# Yarn
+.yarn/cache
+.yarn/*state*
+
+# Local History
+.history
+
+# VSCode
+.vscode/
+.idea
+/.playground/.idea/
+/.playground/yarn.lock
+lint-report.xml
+/src/server/assets/cdnManagerMinified.js
