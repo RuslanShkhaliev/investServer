@@ -1,23 +1,31 @@
-import {Document} from 'mongodb';
-import {Schema} from 'mongoose';
+import {AssetDto} from '@/modules/Asset';
+import {model, Schema} from 'mongoose';
 
 
-interface IPortfolio {
+export interface IPortfolio {
     name: string;
-    currentBalance: number; // текущий баланс
-    allTimeProfit: number; // прибыль/убыток за все время
-    bestPerformer: number; // лучший результат
-    worstPerformer: number; // худший результат
+    currentBalance?: number; // текущий баланс
+    allTimeProfit?: number; // прибыль/убыток за все время
+    bestPerformer?: number; // лучший результат
+    worstPerformer?: number; // худший результат
     description?: string; // описание/заметка
-    assets: string[] // список id активов
+    assets: AssetDto[] // список активов
     category: string; // тип портфеля
 }
 
-export interface PortfolioModel extends IPortfolio, Document {}
-
-export const PortfolioSchema = new Schema<PortfolioModel>({
-    name: String,
-    description: String,
+export const PortfolioSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+    },
+    currentBalance: {
+        type: Number,
+        default: 0,
+    },
     assets: [{type: Schema.Types.ObjectId, ref: 'Asset'}],
-    currentBalance: Number,
 })
+
+export const PortfolioModel = model<IPortfolio>('Portfolio', PortfolioSchema)

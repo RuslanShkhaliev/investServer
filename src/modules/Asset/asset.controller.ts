@@ -5,24 +5,24 @@ import {AssetService} from './asset.service';
 
 
 export class AssetController {
-    assetService: AssetService;
+    private assetService: AssetService;
 
     constructor() {
         this.assetService = new AssetService();
     }
 
-    async createAsset(req: Request, res: Response, next:NextFunction) {
+    public async createAsset(req: Request, res: Response, next:NextFunction) {
         try {
             const assetDto = new AssetDto(req.body);
             const createdAsset = await this.assetService.createAsset(assetDto);
 
-            res.status(201).json(createdAsset);
+            res.json(createdAsset);
         } catch (err:any) {
             next(new ErrorHandler(err.status, err.message))
         }
     }
 
-    async updateAsset(req: Request, res: Response, next: NextFunction) {
+    public async updateAsset(req: Request, res: Response, next: NextFunction) {
         try {
             const {id} = req.params;
             const updatedAsset = await this.assetService.updateAsset(id, req.body);
@@ -32,7 +32,7 @@ export class AssetController {
         }
     }
 
-    async removeAsset(req: Request, res: Response, next:NextFunction) {
+    public async removeAsset(req: Request, res: Response, next: NextFunction) {
         try {
             const {id} = req.params;
             const deletedAsset = await this.assetService.removeAsset(id);
@@ -42,7 +42,7 @@ export class AssetController {
         }
     }
 
-    async getAsset(req: Request, res: Response, next:NextFunction) {
+    public async getAsset(req: Request, res: Response, next: NextFunction) {
         try {
             const {id} = req.params;
             const asset = await this.assetService.getAsset(id);

@@ -1,5 +1,4 @@
-import {Document} from 'mongodb';
-import {model, Schema, Types} from 'mongoose';
+import {Document, model, Schema, Types} from 'mongoose';
 
 
 export enum AssetType {
@@ -36,6 +35,7 @@ export class AssetDto {
     dividendPerShare?: number; //размер дивиденда на акцию
     annualPercentageRate?: number; //годовая процентная ставка
     portfolioId!: Types.ObjectId; //id портфеля к которому относится
+
     constructor(model?: Partial<AssetDto>) {
         // noinspection TypeScriptValidateTypes
         Object.assign(this, model);
@@ -44,7 +44,7 @@ export class AssetDto {
 
 export interface IAsset extends AssetDto, Document {}
 
-export const AssetSchema = new Schema<AssetDto>({
+export const AssetSchema = new Schema({
     type: {
         type: String,
         enum: Object.values(AssetType),
@@ -56,27 +56,58 @@ export const AssetSchema = new Schema<AssetDto>({
     },
     portfolioId: {
         type: Schema.Types.ObjectId,
-        ref: 'Portfolio'
+        ref: 'Portfolio',
+        required: true
     },
-    symbol: String,
-    holdings: Number,
-    price: Number,
-    fee: Number,
-    averageBuyPrice: Number,
-    tax: Number,
-    faceValue: Number,
-    annualCouponRate: Number,
-    dividendPerShare: Number,
+    symbol: {
+        type: String,
+    },
+    holdings: {
+        type: Number
+    },
+    price: {
+        type: Number
+    },
+    fee: {
+        type: Number
+    },
+    averageBuyPrice: {
+        type: Number
+    },
+    tax: {
+        type: Number
+    },
+    faceValue: {
+        type: Number
+    },
+    annualCouponRate: {
+        type: Number
+    },
+    dividendPerShare: {
+        type: Number
+    },
     callableStatus: {
         type: String,
         enum: Object.values(CallableStatus),
     },
-    paymentDate: Number,
-    staked: Number,
-    maturityDate: Date,
-    exchangeRate: Number,
-    annualPercentageRate: Number,
-    investmentPeriod: Number,
+    paymentDate: {
+        type: Number
+    },
+    staked: {
+        type: Number
+    },
+    maturityDate: {
+        type: Date
+    },
+    exchangeRate: {
+        type: Number
+    },
+    annualPercentageRate: {
+        type: Number
+    },
+    investmentPeriod: {
+        type: Number
+    },
 });
 
-export const AssetModel = model<IAsset>('Asset', AssetSchema);
+export const AssetModel = model<AssetDto>('Asset', AssetSchema);

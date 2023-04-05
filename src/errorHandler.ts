@@ -38,9 +38,9 @@ export class ErrorHandler extends Error {
 
     static handleCastError(err: any) {
         if (err instanceof Error.CastError) {
-            throw ErrorHandler.handleBadRequestError(err.message)
+            return ErrorHandler.handleBadRequestError(err.message)
         }
 
-        throw err
+        return err
     }
 }

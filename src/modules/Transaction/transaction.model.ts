@@ -1,43 +1,127 @@
-type TransactionType = 'buy' | 'sell' | 'deposit' | 'withdrawal' | 'dividend';
+import {model, Schema, Types} from 'mongoose';
+
 
 interface ITransaction {
+    _id: Types.ObjectId;
     name: string;
+    quantity: number; //количество
+    price: number; //цена за еденицу
     amount: number; //сумма операции
-    date: Date;
     note?: string; //примечание
-    commission?: number;
-    price?: number; //цена за еденицу
+    fee?: number; //коммисия
+    date: Date;
 }
 
-interface StockTransaction {
+interface IStockTransaction extends ITransaction {
     type: 'buy' | 'sell' | 'dividend';
-    symbol: string; // Тикер акции
-    amount: number; // Количество акций
-    price: number; // Цена за акцию
-    date: Date; // Дата транзакции
+    dividend: number; //размер дивидендов
 }
 
-interface BondTransaction {
-    type: 'buy' | 'sell' | 'interest'; // Тип транзакции (покупка, продажа, проценты)
-    name: string; // Название облигации
-    amount: number; // Количество облигаций
-    price: number; // Цена за облигацию
-    date: Date; // Дата транзакции
+interface IBondTransaction extends ITransaction {
+    type: 'buy' | 'sell' | 'interest'; //тип транзакции (покупка, продажа, проценты)
+    faceValue: number; //номинальная стоимость облигации
+    interest?: number; //размер начисленных процентов
 }
 
-interface CryptoTransaction {
-    type: 'buy' | 'sell'; // Тип транзакции (покупка, продажа)
-    symbol: string; // Тикер криптовалюты
-    amount: number; // Количество криптовалюты
-    price: number; // Цена за единицу криптовалюты
-    date: Date; // Дата транзакции
+interface ICryptoTransaction extends ITransaction {
+    type: 'buy' | 'sell' | 'staking' | 'transfer'; //тип транзакции (покупка, продажа)
+    symbol: string; //Тикер криптовалюты
+    staked?: number; //количество стейкнутых единиц
 }
 
-interface CurrencyTransaction {
-    type: 'buy' | 'sell'; // Тип транзакции (покупка, продажа)
-    currency: string; // Код валюты
-    amount: number; // Количество валюты
-    rate: number; // Курс валюты
-    date: Date; // Дата транзакции
+interface ICurrencyTransaction extends ITransaction {
+    type: 'buy' | 'sell'; //тип транзакции (покупка, продажа)
+    currency: string; //код валюты
+    exchangeRate: number; //курс валюты
 }
+
+const TransactionSchema = new Schema<ITransaction>({
+    name: {
+        type: String,
+        required: true,
+    },
+    quantity: {
+        type: Number,
+        required: true,
+    },
+    price: {
+        type: Number,
+        required: true,
+    },
+    amount: {
+        type: Number,
+        required: true,
+    },
+    note: {
+        type: String,
+        default: null,
+    },
+    fee: {
+        type: Number,
+        default: null,
+    },
+    date: {
+        type: Date,
+        required: true,
+    },
+});
+
+export const StockTransactionSchema = new Schema({
+    type: {
+        type: String,
+        enum: ['buy', 'sell', 'dividend'],
+        required: true,
+    },
+    dividend: {
+        type: Number,
+    },
+    ...TransactionSchema.obj,
+});
+
+export const BondTransactionSchema = new Schema({
+    type: {
+        type: String,
+        enum: ['buy', 'sell', 'interest'],
+        required: true,
+    },
+    faceValue: {
+        type: Number,
+    },
+    interest: {
+        type: Number,
+    },
+    ...TransactionSchema.obj,
+});
+
+export const CryptoTransactionSchema = new Schema({
+    type: {
+        type: String,
+        enum: ['buy', 'sell', 'staking'],
+        required: true,
+    },
+    symbol: {
+        type: String,
+    },
+    staked: {
+        type: Number,
+    },
+    ...TransactionSchema.obj,
+});
+
+export const CurrencyTransactionSchema = new Schema({
+    type: {
+        type: String,
+        enum: ['buy', 'sell'],
+        required: true,
+    },
+    currency: String,
+    exchangeRate: Number,
+    ...TransactionSchema.obj,
+});
+
+
+export const StockTransaction = model<IStockTransaction>('StockTransaction', StockTransactionSchema);
+export const BondTransaction = model<IBondTransaction>('BondTransaction', BondTransactionSchema);
+export const CryptoTransaction = model<ICryptoTransaction>('CryptoTransaction', CryptoTransactionSchema);
+export const CurrencyTransaction = model<ICurrencyTransaction>('CurrencyTransaction', CurrencyTransactionSchema);
 

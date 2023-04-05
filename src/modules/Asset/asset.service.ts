@@ -10,7 +10,7 @@ export class AssetService {
             throw ErrorHandler.handleInternalServerError('Failed to createAsset asset');
         }
     }
-    public async updateAsset(id: string, asset: IAsset) {
+    public async updateAsset(id: string, asset: Partial<IAsset>) {
         try {
             return AssetModel.findByIdAndUpdate(id, asset, {new: true});
         } catch (err) {
