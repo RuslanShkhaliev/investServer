@@ -1,4 +1,4 @@
-import {Document, model, Schema, Types} from 'mongoose';
+import {Document, model, Schema} from 'mongoose';
 
 
 export enum AssetType {
@@ -15,6 +15,8 @@ enum CallableStatus {
 }
 
 export class AssetDto {
+    portfolioId!: Schema.Types.ObjectId; //id портфеля к которому относится
+    profileId!: Schema.Types.ObjectId; //id портфеля к которому относится
     type: AssetType = AssetType.DEFAULT;
     name = ''; //название актива
     symbol?: string; //тикер актива
@@ -34,7 +36,8 @@ export class AssetDto {
     exchangeRate?: number; //обменный курс
     dividendPerShare?: number; //размер дивиденда на акцию
     annualPercentageRate?: number; //годовая процентная ставка
-    portfolioId!: Types.ObjectId; //id портфеля к которому относится
+    createdAt?: Date;
+    updatedAt?: Date;
 
     constructor(model?: Partial<AssetDto>) {
         // noinspection TypeScriptValidateTypes
@@ -45,6 +48,16 @@ export class AssetDto {
 export interface IAsset extends AssetDto, Document {}
 
 export const AssetSchema = new Schema({
+    portfolioId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Portfolio',
+        required: true
+    },
+    profileId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Profile',
+        required: true
+    },
     type: {
         type: String,
         enum: Object.values(AssetType),
@@ -54,60 +67,78 @@ export const AssetSchema = new Schema({
         type: String,
         required: true,
     },
-    portfolioId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Portfolio',
-        required: true
-    },
     symbol: {
         type: String,
+        default: '',
     },
     holdings: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     price: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     fee: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     averageBuyPrice: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     tax: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     faceValue: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     annualCouponRate: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     dividendPerShare: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     callableStatus: {
         type: String,
         enum: Object.values(CallableStatus),
     },
     paymentDate: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     staked: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     maturityDate: {
-        type: Date
+        type: Date,
+        default: 0,
     },
     exchangeRate: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     annualPercentageRate: {
-        type: Number
+        type: Number,
+        default: 0,
     },
     investmentPeriod: {
-        type: Number
+        type: Number,
+        default: 0,
     },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+    }
 });
 
-export const AssetModel = model<AssetDto>('Asset', AssetSchema);
+export const AssetModel = model<AssetDto>('Asset', AssetSchema, 'asset');

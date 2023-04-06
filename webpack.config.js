@@ -21,6 +21,9 @@ module.exports = {
     },
     externals: [nodeExternals()],
     resolve: {
+        alias: {
+            '@': path.resolve(__dirname, 'src'),
+        },
         extensions: ['.ts', '.js', '.json'],
     },
     output: {

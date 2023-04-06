@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const URI = process.env.MONGO_URL || 'mongodb+srv://root:root@invest.720fcnh.mongodb.net/?retryWrites=true&w=majority'
+const URI = process.env.MONGO_URL || 'mongodb://localhost:27017'
 
 export const connectToDatabase = async () => {
     try {

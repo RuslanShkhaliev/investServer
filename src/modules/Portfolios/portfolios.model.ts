@@ -1,34 +1,32 @@
-import {IPortfolio, PortfolioSchema} from '@/modules/Portfolio/portfolio.model';
 import {Document, model, Schema} from 'mongoose';
 
 
-export interface IPortfolios {
-    name: string;
-    items: IPortfolio[];
-    createdAt: Date;
-    updatedAt: Date;
+export class PortfoliosDto {
+    items?: Schema.Types.ObjectId[];
+    profileId: string
+    createdAt?: Date;
+    updatedAt?: Date;
+
+    constructor(props: Pick<PortfoliosDto, 'profileId'>) {
+        this.profileId = props.profileId!;
+    }
 }
 
-export interface IPortfoliosModel extends IPortfolios, Document {}
+export interface IPortfoliosModel extends PortfoliosDto, Document {}
 
 const PortfoliosSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    profileId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Profile',
-        required: true,
-    },
-    items: [PortfolioSchema],
+    items: [{type: Schema.Types.ObjectId, ref: 'Portfolio'}],
     createdAt: {
         type: Date,
-        default: Date.now.toString(),
+        default: Date.now,
     },
     updatedAt: {
         type: Date,
-        default: Date.now.toString(),
+        default: Date.now,
+    },
+    profileId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Profile'
     }
 })
 

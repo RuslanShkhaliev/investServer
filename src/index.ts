@@ -1,21 +1,11 @@
-import express from 'express';
+import app from '@/app';
 import {connectToDatabase} from './db';
 
-const PORT = 8000;
-const app = express();
+const PORT = process.env.PORT || 8000;
 
-app.use(express.json());
-
-app.use('*', (req, res) => {
-    console.log(req.url)
-    res.end('hello')
-})
 
 connectToDatabase().then(() => {
     app.listen(PORT, async () => {
         console.log(`Server listening on port http://localhost:${PORT}`);
     })
 })
-
-
-

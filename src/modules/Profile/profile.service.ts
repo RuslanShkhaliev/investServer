@@ -1,20 +1,21 @@
-import {ErrorHandler} from '@/errorHandler';
-import {IProfile, ProfileModel} from '@/modules/Profile/profile.model';
+import {Types} from 'mongoose';
+import {ErrorHandler} from '../../errorHandler';
+import {ProfileDto, ProfileModel} from './profile.model';
 
 
-export class ProfileService {
-    public async createProfile() {
+class ProfileService {
+    public async createProfile(profileDto: ProfileDto){
         try {
-            return await ProfileModel.create();
+            return await ProfileModel.create(profileDto);
         } catch (error) {
-            throw ErrorHandler.handleCastError(error);
+            throw ErrorHandler.handleBadRequestError('Profile could not be created');
         }
     }
-    public async getProfile(email: string) {
+    public async getProfile(id: Types.ObjectId) {
        try {
-           const profile = await ProfileModel.findOne({email}).populate('portfolios');
+           const profile = await ProfileModel.findById(id);
            if (!profile) {
-               throw ErrorHandler.handleNotFoundError(`User with email ${email} not found`);
+               throw ErrorHandler.handleNotFoundError(`Profile with id ${id} not found`);
            }
            return profile;
        } catch (error) {
@@ -22,7 +23,16 @@ export class ProfileService {
        }
     }
 
-    public async updateProfile(id, profile: IProfile) {
-        const updatedProfile = await ProfileModel.findByIdAndUpdate(id, profile, {new: true}).populate('portfolios');
+    public async updateProfile(id: string, profile: ProfileDto) {
+        try {
+            const updatedProfile = await ProfileModel.findByIdAndUpdate(id, profile, {new: true});
+            if (!updatedProfile) {
+                throw ErrorHandler.handleNotFoundError(`User with id ${id} not found`);
+            }
+            return updatedProfile;
+        } catch (error) {
+            throw ErrorHandler.handleCastError(error);
+        }
     }
 }
+export default new ProfileService();

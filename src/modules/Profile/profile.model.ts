@@ -1,31 +1,38 @@
-import {IPortfolio} from '@/modules/Portfolio/portfolio.model';
-import {Document} from 'mongodb';
-import {model, Schema} from 'mongoose';
+import {Document, model, Schema} from 'mongoose';
 
 
-export interface IProfile {
-    name: string;
-    portfolios: IPortfolio[];
-    email?: string;
+export class ProfileDto {
+    name?: string;
+    surname?: string;
     avatar?: string;
+
+    constructor(props: ProfileDto = {}) {
+        const {
+            name = 'Unknown',
+            surname = 'Unknown',
+            avatar = 'https://media.istockphoto.com/id/476085198/photo/businessman-silhouette-as-avatar-or-default-profile-picture.jpg?s=612x612&w=0&k=20&c=GVYAgYvyLb082gop8rg0XC_wNsu0qupfSLtO7q9wu38=',
+        } = props || {};
+        this.name = name;
+        this.surname = surname;
+        this.avatar = avatar;
+    }
 }
 
-
-export interface ProfileModel extends IProfile, Document {}
+export interface IProfileModel extends ProfileDto, Document {}
 
 
 export const ProfileSchema = new Schema({
     name: {
         type: String,
-        required: true,
+        default: 'Unknown'
     },
-    email: {
+    surname: {
         type: String,
+        default: 'Unknown'
     },
-    portfolios: [{type: Schema.Types.ObjectId, ref: 'Portfolio'}],
     avatar: {
         type: String,
-    }
+    },
 });
 
-export const ProfileModel = model<ProfileModel>('Profile', ProfileSchema);
+export const ProfileModel = model<ProfileDto>('Profile', ProfileSchema);

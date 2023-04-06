@@ -1,12 +1,14 @@
-import {PortfoliosController} from '@/modules/Portfolios/portfolios.controller';
 import {Router} from 'express';
+import {PortfoliosController} from './portfolios.controller';
 
 const portfoliosController = new PortfoliosController()
+
+//@ts-ignore
 const portfoliosRouter = new Router();
 
-portfoliosRouter.route('/portfolios')
-.get(portfoliosController.getPortfolios)
-.put(portfoliosController.updatePortfolios)
+portfoliosRouter.get('/', portfoliosController.getPortfolios)
+portfoliosRouter.route('/:id').put(portfoliosController.updatePortfolios)
+
 
 
 export default portfoliosRouter;

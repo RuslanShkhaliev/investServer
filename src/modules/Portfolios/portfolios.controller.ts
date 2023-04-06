@@ -1,29 +1,28 @@
-import {PortfoliosService} from '@/modules/Portfolios/portfolios.service';
+import {ErrorHandler} from '@/errorHandler';
 import {NextFunction, Request, Response} from 'express';
+import PortfoliosService from './portfolios.service';
 
 
 export class PortfoliosController {
-    private portfoliosService: PortfoliosService;
-    constructor() {
-        this.portfoliosService = new PortfoliosService();
-    }
-
     public async getPortfolios(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params
-            const portfolios = await this.portfoliosService.getPortfolios(id);
+            const {profileId = ''} = req.query
+            if (!profileId) {
+                throw ErrorHandler.handleBadRequestError('query param `profileId` is required');
+            }
+            const portfolios = await PortfoliosService.getPortfolios(profileId.toString());
             res.json(portfolios);
         } catch (error) {
-            res.json(error)
+            next(error)
         }
     }
     public async updatePortfolios(req: Request, res: Response, next: NextFunction) {
         try {
             const {id} = req.params;
-            const portfolios = await this.portfoliosService.updatePortfolios(id, req.body);
+            const portfolios = await PortfoliosService.updatePortfolios(id, req.body);
             res.json(portfolios)
         } catch (error) {
-            res.json(error)
+            next(error)
         }
     }
 }

@@ -1,33 +1,47 @@
-import {ErrorHandler} from '@/errorHandler';
-import {IPortfolio, PortfolioModel} from '@/modules/Portfolio/portfolio.model';
+import {PortfolioDto} from '@/modules/Portfolio/portfolio.model';
+import {NextFunction, Request, Response} from 'express';
+import PortfolioService from './portfolio.service';
 
 
 export class PortfolioController {
-    public async createPortfolio(portfolio: Partial<IPortfolio>) {
+
+    public async createPortfolio(req: Request, res: Response, next: NextFunction) {
         try {
-            const newPortfolio = await PortfolioModel.create(portfolio)
-            if (!newPortfolio) {
-                throw ErrorHandler.handleBadRequestError('Portfolio was not created');
-            }
+            const profileId = req.cookies.profileId;
+            const portfolioDto = new PortfolioDto({profileId, ...req.body})
+            const portfolio = await PortfolioService.createPortfolio(portfolioDto);
+            res.json(portfolio);
         } catch (error) {
-            throw ErrorHandler.handleCastError(error);
+            next(error)
         }
     }
 
-    public async getPortfolio(portfolioId: string) {
+    public async getPortfolio(req: Request, res: Response, next: NextFunction) {
         try {
-            const portfolio = await PortfolioModel.findById(portfolioId)
-
+            const portfolio = await PortfolioService.getPortfolio(req.params.id);
+            res.json(portfolio);
         } catch (error) {
-            throw ErrorHandler.handleCastError(error);
+            next(error)
         }
     }
 
-    public async updatePortfolio(portfolio: any) {
+    public async updatePortfolio(req: Request, res: Response, next: NextFunction) {
         try {
-
+            const {id} = req.params;
+            const portfolio = await PortfolioService.updatePortfolio(id, req.body);
+            res.json(portfolio);
         } catch (error) {
-            throw ErrorHandler.handleCastError(error);
+            next(error)
+        }
+    }
+
+    public async removePortfolio(req: Request, res: Response, next: NextFunction) {
+        try {
+            const {id} = req.params;
+            await PortfolioService.removePortfolio(id);
+            res.status(200).end();
+        } catch (error) {
+            next(error)
         }
     }
 

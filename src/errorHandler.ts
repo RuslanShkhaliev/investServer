@@ -1,11 +1,11 @@
-import {Error} from 'mongoose';
+import {Error as MongooseError} from 'mongoose';
 
 
-export class ErrorHandler extends Error {
+export class ErrorHandler {
     public statusCode: number;
     public message: string;
+
     constructor(statusCode: number, message: string) {
-        super(message)
         this.statusCode = statusCode;
         this.message = message;
     }
@@ -37,7 +37,7 @@ export class ErrorHandler extends Error {
 
 
     static handleCastError(err: any) {
-        if (err instanceof Error.CastError) {
+        if (err instanceof MongooseError.CastError) {
             return ErrorHandler.handleBadRequestError(err.message)
         }
 
