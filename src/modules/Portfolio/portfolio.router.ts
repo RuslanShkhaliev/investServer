@@ -6,11 +6,11 @@ const portfolioController = new PortfolioController();
 const portfolioRouter = new Router()
 
 portfolioRouter.route('/:id')
-.get(portfolioController.getPortfolio)
-.patch(portfolioController.updatePortfolio)
-.delete(portfolioController.removePortfolio)
+.get(portfolioController.getById)
+.patch(portfolioController.update)
+.delete(portfolioController.remove)
 
-portfolioRouter.post('/', portfolioController.createPortfolio)
+portfolioRouter.post('/', portfolioController.create)
 
 export {
     portfolioRouter

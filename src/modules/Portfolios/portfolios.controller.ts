@@ -4,22 +4,21 @@ import PortfoliosService from './portfolios.service';
 
 
 export class PortfoliosController {
-    public async getPortfolios(req: Request, res: Response, next: NextFunction) {
+    public async getByProfileId(req: Request, res: Response, next: NextFunction) {
         try {
-            const {profileId = ''} = req.query
+            const {profileId = ''} = req.params
             if (!profileId) {
-                throw ErrorHandler.handleBadRequestError('query param `profileId` is required');
+                throw ErrorHandler.handleBadRequestError('param `profileId` is required');
             }
-            const portfolios = await PortfoliosService.getPortfolios(profileId.toString());
+            const portfolios = await PortfoliosService.getByProfileId(profileId);
             res.json(portfolios);
         } catch (error) {
             next(error)
         }
     }
-    public async updatePortfolios(req: Request, res: Response, next: NextFunction) {
+    public async update(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
-            const portfolios = await PortfoliosService.updatePortfolios(id, req.body);
+            const portfolios = await PortfoliosService.update(req.params.id, req.body);
             res.json(portfolios)
         } catch (error) {
             next(error)

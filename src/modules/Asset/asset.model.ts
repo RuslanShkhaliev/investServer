@@ -1,52 +1,31 @@
-import {Document, model, Schema} from 'mongoose';
+import {AssetType, CallableStatus} from '@/modules/Asset/asset.enum';
+import {BaseInterface} from '@/modules/base';
+import {Document, model, Schema, Types} from 'mongoose';
 
 
-export enum AssetType {
-    DEFAULT = 'default',
-    STOCK = 'stock',
-    BOND = 'bond',
-    CRYPTO = 'crypto',
-    CURRENCY = 'currency',
-}
-
-enum CallableStatus {
-    IS_CALLABLE = 'callable',
-    NON_CALLABLE = 'non-callable'
-}
-
-export class AssetDto {
-    portfolioId!: Schema.Types.ObjectId; //id портфеля к которому относится
-    profileId!: Schema.Types.ObjectId; //id портфеля к которому относится
-    type: AssetType = AssetType.DEFAULT;
-    name = ''; //название актива
-    symbol?: string; //тикер актива
-    holdings?: number; //количество
-    price?: number; //цена покупки
-    fee?: number; //комиссия при покупке
-    tax?: number; //налог за вывод с биржи
-    investmentPeriod?: number; //период вклада (лет)
-    faceValue?: number; //номинальная стоимость (облигации)
-    annualCouponRate?: number; //годовая купонная ставка (облигации)
-    averageBuyPrice?: number; //средняя цена покупки
-    paymentDate?: number; //дата выплаты процентов(облигации)
-    staked?: number; //количество стейкнутых единиц(crypto)
-    interest?: number; //размер начисляемых процентов
-    maturityDate?: Date; //время когда долг по облигации будет погашен
+export interface IAsset extends BaseInterface {
+    portfolioId: Types.ObjectId; //id портфеля к которому относится
+    profileId: Types.ObjectId; //id портфеля к которому относится
+    type: AssetType;
+    symbol: string; //тикер актива
+    holdings: number; //количество
+    price: number; //цена покупки
+    fee: number; //комиссия при покупке
+    tax: number; //налог за вывод с биржи
+    investmentPeriod: number; //период вклада (лет)
+    faceValue: number; //номинальная стоимость (облигации)
+    annualCouponRate: number; //годовая купонная ставка (облигации)
+    averageBuyPrice: number; //средняя цена покупки
+    paymentDate: number; //дата выплаты процентов(облигации)
+    staked: number; //количество стейкнутых единиц(crypto)
+    interest: number; //размер начисляемых процентов
+    maturityDate: string; //дата когда долг по облигации будет погашен
     callableStatus?: CallableStatus; //является ли облигация закрытой или изменяемой
-    exchangeRate?: number; //обменный курс
-    dividendPerShare?: number; //размер дивиденда на акцию
-    annualPercentageRate?: number; //годовая процентная ставка
-    createdAt?: Date;
-    updatedAt?: Date;
-
-    constructor(model?: Partial<AssetDto>) {
-        // noinspection TypeScriptValidateTypes
-        Object.assign(this, model);
-    }
+    exchangeRate: number; //обменный курс
+    dividendPerShare: number; //размер дивиденда на акцию
+    annualPercentageRate: number; //годовая процентная ставка
 }
-
-export interface IAsset extends AssetDto, Document {}
-
+export interface IAssetModel extends IAsset, Document {}
 export const AssetSchema = new Schema({
     portfolioId: {
         type: Schema.Types.ObjectId,
@@ -61,7 +40,12 @@ export const AssetSchema = new Schema({
     type: {
         type: String,
         enum: Object.values(AssetType),
+        default: AssetType.DEFAULT,
         required: true,
+    },
+    callableStatus: {
+        type: String,
+        enum: Object.values(CallableStatus),
     },
     name: {
         type: String,
@@ -103,10 +87,6 @@ export const AssetSchema = new Schema({
         type: Number,
         default: 0,
     },
-    callableStatus: {
-        type: String,
-        enum: Object.values(CallableStatus),
-    },
     paymentDate: {
         type: Number,
         default: 0,
@@ -116,7 +96,7 @@ export const AssetSchema = new Schema({
         default: 0,
     },
     maturityDate: {
-        type: Date,
+        type: String,
         default: 0,
     },
     exchangeRate: {
@@ -141,4 +121,4 @@ export const AssetSchema = new Schema({
     }
 });
 
-export const AssetModel = model<AssetDto>('Asset', AssetSchema, 'asset');
+export const AssetModel = model<IAssetModel>('Asset', AssetSchema, 'asset');

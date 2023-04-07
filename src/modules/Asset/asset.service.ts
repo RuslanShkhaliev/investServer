@@ -1,27 +1,30 @@
 import {ErrorHandler} from '@/errorHandler';
-import {AssetDto, AssetModel, IAsset} from './asset.model';
+import {AssetDto} from './asset.dto';
+import {AssetEntity} from './asset.entity';
+import {AssetModel, IAsset} from './asset.model';
 
 
 class AssetService {
-    public async createAsset(asset: AssetDto) {
+    public async createAsset(asset: Partial<IAsset>) {
         try {
-            const newAsset = await AssetModel.create(asset);
+            const assetEntity = new AssetEntity(asset)
+            const newAsset = await AssetModel.create(assetEntity);
             if (!newAsset) {
                 throw ErrorHandler.handleBadRequestError('Failed to createAsset asset')
             }
-            return newAsset;
+            return new AssetDto(newAsset);
         } catch (error) {
             throw ErrorHandler.handleCastError(error);
         }
     }
 
-    public async getAsset(id: string) {
+    public async getById(id: string) {
         try {
             const asset = await AssetModel.findById(id);
             if (!asset) {
                 throw ErrorHandler.handleNotFoundError(`Asset with id ${id} not found`);
             }
-            return asset;
+            return new AssetDto(asset);
         } catch (error) {
             throw ErrorHandler.handleCastError(error);
         }
@@ -30,10 +33,12 @@ class AssetService {
 
     public async updateAsset(id: string, asset: Partial<IAsset>) {
         try {
-            const updatedAsset = await AssetModel.findByIdAndUpdate(id, asset, {new: true});
+            const assetEntity = new AssetEntity(asset)
+            const updatedAsset = await AssetModel.findByIdAndUpdate(id, assetEntity, {new: true});
             if (!updatedAsset) {
                 throw ErrorHandler.handleNotFoundError(`Asset with id ${id} not found`);
             }
+            return new AssetDto(updatedAsset);
         } catch (error) {
             throw ErrorHandler.handleCastError(error);
         }

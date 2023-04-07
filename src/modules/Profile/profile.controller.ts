@@ -1,41 +1,41 @@
-import {PortfoliosDto, PortfoliosService} from '@/modules/Portfolios';
-import {ProfileDto} from '@/modules/Profile/profile.model';
+import {ErrorHandler} from '@/errorHandler';
+import {PortfoliosService} from '@/modules/Portfolios';
 import {NextFunction, Request, Response} from 'express';
 import ProfileService from './profile.service';
 
 
 class ProfileController {
-    public async createProfile(req: Request, res: Response, next: NextFunction) {
+    public async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const profileDto = new ProfileDto();
-            const profile = await ProfileService.createProfile(profileDto)
-            const profileId = profile._id.toString()
-            const portfoliosDto = new PortfoliosDto({profileId});
-            await PortfoliosService.createPortfolios(portfoliosDto)
+            const profile = await ProfileService.create()
+            await PortfoliosService.create(profile.id)
+            res.cookie(
+                'profileId',
+                profile.id,
+                {httpOnly: true,sameSite: 'strict'}
+            )
+            .status(201)
+            .json(profile);
+        } catch (error) {
+            next(error)
+        }
+    }
 
-            res.cookie('profileId', profileId, {
-                httpOnly: true,
-                sameSite: 'strict',
-            })
+    public async getById(req: Request, res: Response, next: NextFunction) {
+        try {
+            if (!req.params.profileId) {
+                throw ErrorHandler.handleBadRequestError(`profileId is required`);
+            }
+            const profile = await ProfileService.getById(req.params.profileId);
             res.json(profile);
         } catch (error) {
             next(error)
         }
     }
 
-    public async getProfile(req: Request, res: Response, next: NextFunction) {
+    public async update(req: Request, res: Response, next: NextFunction) {
         try {
-            const profile = await ProfileService.getProfile(req.cookies['profileId']);
-            res.json(profile);
-        } catch (error) {
-            next(error)
-        }
-    }
-
-    public async updateProfile(req: Request, res: Response, next: NextFunction) {
-        try {
-            const {_id} = req.body;
-            const profile = await ProfileService.updateProfile(_id, req.body)
+            const profile = await ProfileService.update(req.cookies.profileId, req.body)
             res.json(profile);
         } catch (error) {
             next(error)

@@ -1,29 +1,33 @@
 import {ErrorHandler} from '@/errorHandler';
-import {PortfoliosDto, PortfoliosModel} from './portfolios.model';
+import {PortfoliosDto} from '@/modules/Portfolios/portfolios.dto';
+import {PortfoliosEntity} from '@/modules/Portfolios/portfolios.entity';
+import {PortfoliosModel} from './portfolios.model';
 
 
 class PortfoliosService {
-    public async createPortfolios(portfolios: PortfoliosDto) {
+    public async create(profileId: string) {
         try {
-            return await PortfoliosModel.create(portfolios);
+            const portfoliosEntity = new PortfoliosEntity(profileId);
+            const portfolios = await (await PortfoliosModel.create(portfoliosEntity)).populate('items');
+            return new PortfoliosDto(portfolios)
         } catch (error) {
             throw ErrorHandler.handleBadRequestError('portfolios cannot be created');
         }
     }
 
-    public async getPortfolios(profileId: string) {
+    public async getByProfileId(profileId: string) {
         try {
             const portfolios = await PortfoliosModel.findOne({profileId}).populate('items');
             if (!portfolios) {
                 throw ErrorHandler.handleNotFoundError(`portfolios with profileId: ${profileId}`);
             }
-            return portfolios;
+            return new PortfoliosDto(portfolios);
         } catch (error) {
             throw ErrorHandler.handleCastError(error);
         }
     }
 
-    public async updatePortfolios(id: string, portfolios: Partial<PortfoliosDto>) {
+    public async update(id: string, portfolios: Partial<PortfoliosDto>) {
         try {
             const updatedPortfolios = await PortfoliosModel
             .findByIdAndUpdate(id, portfolios, {new: true})

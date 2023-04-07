@@ -6,9 +6,8 @@ const portfoliosController = new PortfoliosController()
 //@ts-ignore
 const portfoliosRouter = new Router();
 
-portfoliosRouter.get('/', portfoliosController.getPortfolios)
-portfoliosRouter.route('/:id').put(portfoliosController.updatePortfolios)
-
+portfoliosRouter.put('/:id', portfoliosController.update)
+portfoliosRouter.get('/:profileId', portfoliosController.getByProfileId);
 
 
 export default portfoliosRouter;

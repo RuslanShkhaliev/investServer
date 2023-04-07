@@ -1,4 +1,3 @@
-import {AssetDto} from '@/modules/Asset/asset.model';
 import {NextFunction, Request, Response} from 'express';
 import AssetService from './asset.service';
 
@@ -6,9 +5,8 @@ import AssetService from './asset.service';
 export class AssetController {
     public async createAsset(req: Request, res: Response, next:NextFunction) {
         try {
-            const assetDto = new AssetDto(req.body);
-            const createdAsset = await AssetService.createAsset(assetDto);
-            res.json(createdAsset);
+            const createdAsset = await AssetService.createAsset(req.body);
+            res.status(201).json(createdAsset);
         } catch (error) {
             next(error)
         }
@@ -24,10 +22,10 @@ export class AssetController {
         }
     }
 
-    public async getAsset(req: Request, res: Response, next: NextFunction) {
+    public async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const {id} = req.params;
-            const asset = await AssetService.getAsset(id);
+            const asset = await AssetService.getById(id);
             res.json(asset)
         } catch (error) {
             next(error)

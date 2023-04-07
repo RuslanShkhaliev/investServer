@@ -7,7 +7,7 @@ const assetController = new AssetController();
 const assetRouter = new Router();
 
 assetRouter.route('/:id')
-.get(assetController.getAsset)
+.get(assetController.getById)
 .patch(assetController.updateAsset)
 .delete(assetController.removeAsset);
 
