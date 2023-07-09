@@ -1,6 +1,0 @@
-export * from './profile.controller'
-export * from './profile.router'
-export * from './profile.model'
-export * from './profile.service'
-export * from './profile.dto'
-export * from './profile.entity'

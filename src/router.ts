@@ -1,17 +1,12 @@
-import {assetRouter} from '@/modules/Asset';
-import {portfolioRouter} from '@/modules/Portfolio/portfolio.router';
-import portfoliosRouter from '@/modules/Portfolios/portfolios.router';
-import {profileRouter} from '@/modules/Profile/profile.router';
+import {assetRouter} from '@/modules/assets';
+import {portfoliosRouter} from '@/modules/portfolios';
 import {Router} from 'express';
 
 // @ts-ignore
 const appRouter = new Router();
 
-appRouter.use('/asset', assetRouter)
-appRouter.use('/portfolios', portfoliosRouter)
-appRouter.use('/portfolio', portfolioRouter)
-appRouter.use('/profile', profileRouter)
+appRouter.use('/portfolios', portfoliosRouter);
+appRouter.use('/assets', assetRouter);
 
-export {
-    appRouter
-}
+export default appRouter;
+export * from './middlewares'

@@ -26,6 +26,7 @@ export class ErrorHandler {
     }
 
     static handleNotFoundError(message?: string) {
+        console.log('HANDLE NOT FOUND ERROR ')
         message ??= ''
         return new ErrorHandler(404, `Not Found ${message}`)
     }
